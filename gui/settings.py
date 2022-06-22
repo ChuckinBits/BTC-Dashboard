@@ -24,7 +24,6 @@ def settingsMenu():
 			status = urltest.status_code
 			urltest.close()
 			print("Tried connecting to: " + e_url + " Status code: " + str(status))
-			#settings_label.configure(text="Tried connecting to: " + e_url + " Status code: " + str(status))
 			b_url = e_url + "api/blocks/tip/height"
 			urltest = requests.get(b_url)
 			status = urltest.status_code
@@ -40,6 +39,11 @@ def settingsMenu():
 			status = urltest.status_code
 			urltest.close()
 			print("Tried connecting to: " + f_url + " Status code: " + str(status))
+			t_url = e_url + 'api/mempool'
+			urltest = requests.get(t_url)
+			status = urltest.status_code
+			urltest.close()
+			print("Tried connecting to: " + t_url + " Status code: " + str(status))
 			print("Success on all node tests!")
 			messagebox.showinfo("Success!", "Success on all node tests!", parent=settings)
 		except:

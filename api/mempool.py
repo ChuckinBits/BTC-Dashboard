@@ -10,11 +10,12 @@ def mempoolspace():
 			block_url = 'https://mempool.space/api/blocks/tip/height'
 			difadj_url = 'https://mempool.space/api/v1/difficulty-adjustment'
 			fees_url = 'https://mempool.space/api/v1/fees/recommended'
+			transaction_url = 'https://mempool.space/api/mempool'
 		else:
 			block_url = config.ip_url + 'api/blocks/tip/height'
 			difadj_url = config.ip_url + 'api/v1/difficulty-adjustment'
 			fees_url = config.ip_url + 'api/v1/fees/recommended'
-		transaction_url = 'https://mempool.space/api/mempool'
+			transaction_url = config.ip_url + 'api/mempool'
 		transaction_api_request = urlopen(transaction_url).read()
 		config.mempool = float(loads(transaction_api_request)['count'])
 		block_api_request = urlopen(block_url).read()
@@ -49,7 +50,10 @@ def mempoolspace():
 		config.mempoolerror = 0
 	except:
 		try:
-			urltest = requests.get('https://mempool.space/')
+			if config.node_connected != 1:
+				urltest = requests.get('https://mempool.space/')
+			else:
+				urltest = requests.get(config.ip_url)
 			status = urltest.status_code
 			urltest.close()
 			config.mempoolerror = 1
