@@ -473,8 +473,14 @@ gui.splash.splashScreen()
 config.root.geometry("%dx%d+0+0" % (config.width_value, config.height_value))
 config.root.configure(bg='black', cursor= 'crosshair')
 config.root.attributes('-fullscreen', True)
-btclogo = PhotoImage(file=r"images\btclogo.png")
-settingsicon = PhotoImage(file=r"images\settings.png")
+try:
+	btclogo = PhotoImage(file=r"images\btclogo.png")
+except:
+	btclogo = PhotoImage(file=r"images/btclogo.png")
+try:
+	settingsicon = PhotoImage(file=r"images\settings.png")
+except:
+	settingsicon = PhotoImage(file=r"images/settings.png")
 my_gui = BTCTicker(config.root)
 api.apicall.initialCall()
 BTCTicker.labels()
