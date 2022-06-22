@@ -292,7 +292,10 @@ def settingsMenu():
 	
 	settings.geometry(f'{settings_width}x{settings_height}+{settings_x}+{settings_y}')
 	settings.title('Settings')
-	img = PhotoImage(file=r'images\btcicon.png')
+	try:
+		img = PhotoImage(file=r'images\btcicon.png')
+	except:
+		img = PhotoImage(file=r'images/btcicon.png')
 	settings.tk.call('wm', 'iconphoto', settings._w, img)
 	refresh_conv.grid(row=1, column=1, columnspan=3)
 	slider.grid(row=2, column=1, columnspan=3)
