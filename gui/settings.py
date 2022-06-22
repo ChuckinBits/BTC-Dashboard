@@ -1,10 +1,15 @@
 from tkinter import *
 from tkinter import messagebox
 import requests
-import customtkinter
 from PIL import ImageTk,Image
 from urllib.request import urlopen
 import config
+global customt
+try:
+	import customtkinter2
+	customt = 1
+except:
+	customt = 0
 
 def settingsMenu():
 	# slider values (min 1 second, max 24 hours)
@@ -62,7 +67,7 @@ def settingsMenu():
 			refresh_seconds
 		except NameError:
 			refresh_seconds = int(config.refreshtime / 1000)
-
+		
 		config.new_refreshtime = int(refresh_seconds) * 1000
 		if int(refresh_seconds) == int(config.refreshtime / 1000):
 			refresh_msg = ""
@@ -243,44 +248,61 @@ def settingsMenu():
 	except NameError:
 		slider_value = checkCustomRefresh(config.default_refresh)
 
-	customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
-	customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
 	spin_var = IntVar()
 	spin_var.set(slider_value)
 	src = IntVar()
 	src.set(config.node_connected)
-	settings = customtkinter.CTkToplevel()
 	settings_width = 550
 	settings_height = 300
 	config.width_value=config.root.winfo_screenwidth()
 	config.height_value=config.root.winfo_screenheight()
 	settings_x = int((config.width_value / 2) - (settings_width / 2))
 	settings_y = int((config.height_value / 2) - (settings_height / 2))
+
+	if customt == 1:
+		customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
+		customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
+		settings = customtkinter.CTkToplevel()
+		refresh_label = customtkinter.CTkLabel(settings, text="Refresh Interval", text_font=('Helvetica',20, 'bold'))
+		refresh_label.grid(row=0, column=1, columnspan=3, ipady=20)
+		refresh_conv = customtkinter.CTkLabel(settings, text=time_text, text_font=('Helvetica', 16))
+		slider = customtkinter.CTkSlider(settings, from_=minval, to=maxval, variable=spin_var, command=slider_change)
+		top_label = customtkinter.CTkLabel(settings, text="Mempool Source", text_font=('Helvetica',20, 'bold'))
+		r_memp = customtkinter.CTkRadioButton(settings, text="Default", variable=src, value=0, command=nodeEnable, text_font=('Helvetica',14))
+		r_custom = customtkinter.CTkRadioButton(settings, text="Custom Node", variable=src, value=1, command=nodeEnable, text_font=('Helvetica',14))
+		url_label = customtkinter.CTkLabel(settings, text="Custom Node URL", text_font=('Helvetica',14))
+		ip_entry = customtkinter.CTkEntry(settings, text_font=('Helvetica',14), width=225)
+		test_button = customtkinter.CTkButton(settings, text="Test", text_font=('Helvetica', 14), command=testConnection)
+		connect_button = customtkinter.CTkButton(settings, text="Apply", text_font=('Helvetica',14, 'bold'), bg='#f2a900', width=30, command=connectToNode)
+		connect_button.grid(row=6, column=0, columnspan=4, pady=30)
+	else:
+		settings = Toplevel()
+		refresh_label = Label(settings, text="Refresh Interval", font=('Helvetica',18, 'bold'))
+		refresh_label.grid(row=0, column=1, columnspan=3, ipady=5)
+		refresh_conv = Label(settings, text=time_text, font=('Helvetica', 16))
+		slider = Scale(settings, from_=minval, to=maxval, orient='horizontal', showvalue=0, variable=spin_var, command=slider_change)
+		top_label = Label(settings, text="Mempool Source", font=('Helvetica',18, 'bold'))
+		r_memp = Radiobutton(settings, text="Default", variable=src, value=0, command=nodeEnable, font=('Helvetica',14))
+		r_custom = Radiobutton(settings, text="Custom Node", variable=src, value=1, command=nodeEnable, font=('Helvetica',14))
+		url_label = Label(settings, text="Custom Node URL", font=('Helvetica',14))
+		ip_entry = Entry(settings, font=('Helvetica',14), width=25)
+		test_button = Button(settings, text="Test", font=('Helvetica', 14), command=testConnection)
+		connect_button = Button(settings, text="Apply", font=('Helvetica',14, 'bold'), bg='#f2a900', width=30, command=connectToNode)
+		connect_button.grid(row=6, column=0, columnspan=4, pady=10)
+	
 	settings.geometry(f'{settings_width}x{settings_height}+{settings_x}+{settings_y}')
 	settings.title('Settings')
 	img = PhotoImage(file=r'images\btcicon.png')
 	settings.tk.call('wm', 'iconphoto', settings._w, img)
-	refresh_label = customtkinter.CTkLabel(settings, text="Refresh Interval", text_font=('Helvetica',20, 'bold'))
-	refresh_label.grid(row=0, column=1, columnspan=3, ipady=20)
-	refresh_conv = customtkinter.CTkLabel(settings, text=time_text, text_font=('Helvetica', 16))
 	refresh_conv.grid(row=1, column=1, columnspan=3)
-	slider = customtkinter.CTkSlider(settings, from_=minval, to=maxval, variable=spin_var, command=slider_change)
 	slider.grid(row=2, column=1, columnspan=3)
 	slider.set(slider_value)
-	top_label = customtkinter.CTkLabel(settings, text="Mempool Source", text_font=('Helvetica',20, 'bold'))
 	top_label.grid(row=3, column=1, columnspan=3)
-	r_memp = customtkinter.CTkRadioButton(settings, text="Default", variable=src, value=0, command=nodeEnable, text_font=('Helvetica',14))
 	r_memp.grid(row=4, column=1, columnspan=2, padx=(0,120), pady=(5,10))
-	r_custom = customtkinter.CTkRadioButton(settings, text="Custom Node", variable=src, value=1, command=nodeEnable, text_font=('Helvetica',14))
 	r_custom.grid(row=4, column=2, columnspan=2, padx=(0,50), pady=(5,10))
-	url_label = customtkinter.CTkLabel(settings, text="Custom Node URL", text_font=('Helvetica',14))
 	url_label.grid(row=5, column=1)
-	ip_entry = customtkinter.CTkEntry(settings, text_font=('Helvetica',14), width=225)
 	ip_entry.grid(row=5, column=2)
-	test_button = customtkinter.CTkButton(settings, text="Test", text_font=('Helvetica', 14), command=testConnection)
 	test_button.grid(row=5, column=3)
-	connect_button = customtkinter.CTkButton(settings, text="Apply", text_font=('Helvetica',14, 'bold'), bg='#f2a900', width=30, command=connectToNode)
-	connect_button.grid(row=6, column=0, columnspan=4, pady=30)
 	ip_entry.insert(0, config.ip_url)
 	nodeEnable()
 	settings.update()
