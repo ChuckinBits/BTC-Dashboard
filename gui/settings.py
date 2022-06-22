@@ -6,7 +6,7 @@ from urllib.request import urlopen
 import config
 global customt
 try:
-	import customtkinter2
+	import customtkinter
 	customt = 1
 except:
 	customt = 0
