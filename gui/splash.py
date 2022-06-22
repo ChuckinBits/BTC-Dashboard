@@ -7,7 +7,11 @@ def splashScreen():
 	splash_height = 325
 	config.splash.configure(bg='black')
 	config.splash.overrideredirect(True)
-	splash_img = ImageTk.PhotoImage(Image.open(r"images\SplashScreen.jpg"))
+	try:
+		splash_img = ImageTk.PhotoImage(Image.open(r"images\SplashScreen.jpg"))
+	except:
+		splash_img = ImageTk.PhotoImage(Image.open(r"images/SplashScreen.jpg"))
+	
 	splash_label = Label(config.splash, image=splash_img, borderwidth=0, highlightthickness = 0)
 	splash_label.grid(row=0, column=0)
 	config.width_value=config.root.winfo_screenwidth()
