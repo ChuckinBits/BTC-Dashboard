@@ -5,10 +5,11 @@ from api.alternative import alt
 from api.bitstamp import bitstamp
 from api.mempool import mempoolspace
 from api.ml1 import ml1
+from api.fullnodes import nodes
 from api.blockchair import blockchair
 from api.coingecko import coingecko
 
-ml1start = altstart = bitstampstart = blockchairstart = coingeckostart = mempoolstart = time.time()
+ml1start = altstart = bitstampstart = blockchairstart = coingeckostart = mempoolstart = nodestart = time.time()
 
 def initialCall():
 	bitstamp()
@@ -16,10 +17,11 @@ def initialCall():
 	mempoolspace()
 	blockchair()
 	alt()
+	nodes()
 	ml1()
 
 def apiCall():
-	global ml1start, altstart, bitstampstart, blockchairstart, coingeckostart, mempoolstart
+	global ml1start, altstart, bitstampstart, blockchairstart, coingeckostart, mempoolstart, nodestart
 	config.refreshtime = config.new_refreshtime
 
 	#Free API Requests Limit Enforcement
@@ -53,7 +55,13 @@ def apiCall():
 		alt_thread = threading.Thread(target=alt, name="Alternative")
 		alt_thread.start()
 		altstart = time.time()
-			
+	
+	# Nodes unknown API Limit, set to 5 minutes to be safe
+	if time.time() - nodestart > 300:
+		nodes_thread = threading.Thread(target=nodes, name="Nodes")
+		nodes_thread.start()
+		nodestart = time.time()
+
 	# 1ML unknown API Limit, set to 5 minutes to be safe
 	if time.time() - ml1start > 300:
 		ml1_thread = threading.Thread(target=ml1, name="ML1")
@@ -84,6 +92,11 @@ def apiCall():
 	try:
 		if alt_thread.is_alive() == True:
 			alt_thread.join()
+	except NameError:
+		pass
+	try:
+		if nodes_thread.is_alive() == True:
+			nodes_thread.join()
 	except NameError:
 		pass
 	try:

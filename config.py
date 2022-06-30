@@ -255,3 +255,12 @@ try:
 	lnchannels_chg
 except NameError:
 	lnchannels_chg = 0
+
+### Nodes API ###
+nodeserror = 0
+ne1 = ""
+ne2 = ""
+try:
+	totalnodes
+except NameError:
+	totalnodes = 0

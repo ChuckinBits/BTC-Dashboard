@@ -23,7 +23,7 @@ class BTCTicker:
 		global mcap_label
 		global blockchain_label
 		global hash_label
-		global difficulty_label
+		#global difficulty_label
 		global dif_label
 		global memp_label
 		global block_label
@@ -33,14 +33,16 @@ class BTCTicker:
 		global high24_label
 		global low24_label
 		global ath_label
-		global athchg_label
+		#global athchg_label
 		global athdate_label
 		global circ_label
 		global fearindex_label
+		global fullnodes_label
 		global lightning_label
 		global lgtcap_label
 		global lnodes_label
 		global lnchannels_label
+		global volume_label
 		global error_label1
 		global error_label2
 		global update_label
@@ -73,19 +75,21 @@ class BTCTicker:
 		blockchain_label.grid(row=9, column=1, sticky=W)
 		block_label = Label(text=("Block Height: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
 		block_label.grid(row=10, column=1, sticky=W)
-		memp_label = Label(text=("Mempool: " + str(0) + " transactions"),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
+		memp_label = Label(text=("Mempool: " + str(0) + "txs"),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
 		memp_label.grid(row=11, column=1, sticky=W)
-		#avgfee_label = Label(text=("Average Fee 24hr: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
-		#avgfee_label.grid(row=12, column=1, sticky=W)
 		recfee_label = Label(text=("Fees: " + str(0) + " sat/vB"),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
 		recfee_label.grid(row=12, column=1, sticky=W)
 		recfeeusd_label = Label(text=("Fees: " + "$" + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
 		recfeeusd_label.grid(row=13, column=1, sticky=W)
+		volume_label = Label(text=("Volume 24hr: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
+		volume_label.grid(row=14, column=1, sticky=W)
+		#avgfee_label = Label(text=("Median Fee 24hr: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
+		#avgfee_label.grid(row=14, column=1, sticky=W)
 		hash_label = Label(text=("Hashrate: " + str(0) + " EH/s"),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
-		hash_label.grid(row=14, column=1, sticky=W)
-		difficulty_label = Label(text=("Difficulty: " + str(0) + " T"),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
-		difficulty_label.grid(row=15, column=1, sticky=W)
-		dif_label = Label(text=("Next difficulty estimate: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
+		hash_label.grid(row=15, column=1, sticky=W)
+		#difficulty_label = Label(text=("Difficulty: " + str(0) + " T"),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
+		#difficulty_label.grid(row=15, column=1, sticky=W)
+		dif_label = Label(text=("Difficulty: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
 		dif_label.grid(row=16, column=1, sticky=W)
 		title3 = "More Data"
 		others_label = Label(master, text=(title3),anchor=NW, justify=LEFT,font=('Helvetica', 28, 'bold'), bg='black', fg='#f2a900')
@@ -96,19 +100,21 @@ class BTCTicker:
 		low24_label.grid(row=4, column=2, sticky=W)
 		ath_label = Label(text=("ATH: $" + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
 		ath_label.grid(row=5, column=2, sticky=W)
-		athchg_label = Label(text=("ATH change: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
-		athchg_label.grid(row=6, column=2, sticky=W)
+		#athchg_label = Label(text=("ATH change: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
+		#athchg_label.grid(row=6, column=2, sticky=W)
 		athdate_label = Label(text=("ATH Date: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
-		athdate_label.grid(row=7, column=2, sticky=W)
+		athdate_label.grid(row=6, column=2, sticky=W)
 		fearindex_label = Label(text=("F&G Index: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
-		fearindex_label.grid(row=8, column=2, sticky=W)
+		fearindex_label.grid(row=7, column=2, sticky=W)
+		fullnodes_label = Label(text=("Full Nodes: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
+		fullnodes_label.grid(row=8, column=2, sticky=W)
 		title4 = "Lightning Network"
 		lightning_label = Label(master, text=(title4),anchor=NW, justify=LEFT,font=('Helvetica',28, 'bold'), bg='black', fg='#f2a900')
 		lightning_label.grid(row=9, column=2, sticky=W)
 		lgtcap_label = Label(text=(u'\u26A1' + " Capacity: " + str(0) + u'\u20bf'),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
-		lgtcap_label.grid(row=10, column=2, sticky=W)
+		lgtcap_label.grid(row=11, column=2, sticky=W)
 		lnodes_label = Label(text=(u'\u26A1' + " Nodes: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
-		lnodes_label.grid(row=11, column=2, sticky=W)
+		lnodes_label.grid(row=10, column=2, sticky=W)
 		lnchannels_label = Label(text=(u'\u26A1' + " Channels: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',20), bg='black', fg='white')
 		lnchannels_label.grid(row=12, column=2, sticky=W)
 		error_label1 = Label(text=(""),anchor=NW, justify=LEFT,font=('Helvetica',14), bg='black', fg='hot pink')
@@ -221,15 +227,15 @@ class BTCTicker:
 		currency = "{:,.2f}".format(config.currenthashrate/1000000000000000000)
 		hash_label.configure(text=("Hashrate: " + str(currency) + " EH/s"), fg=color)
 		currency = "{:,.2f}".format(config.currentdifficulty/1000000000000)
-		difficulty_label.configure(text=("Difficulty: " + str(currency) + " T"), fg='white')
+		#difficulty_label.configure(text=("Difficulty: " + str(currency) + " T"), fg='white')
 
-		currency = "{:,.02%}".format(config.diffadj/100)
+		currency2 = "{:,.02%}".format(config.diffadj/100)
 		try:
 			date_time_obj = datetime.datetime.fromtimestamp(int(config.next_retarget_time_estimate)/1000)
 			textadj = str(date_time_obj.date())
 		except:
 			textadj = "Date Error"
-		dif_label.configure(text="Difficulty adjustment: " + textadj + " " + str(currency), fg='white')
+		dif_label.configure(text="Difficulty: " + str(currency) + "T " + textadj + " " + str(currency2), fg='white')
 		if mempooldiff > config.dispmempooldiff:
 				color = "lightcoral"
 		elif mempooldiff < config.dispmempooldiff * -1:
@@ -237,7 +243,8 @@ class BTCTicker:
 		else: 
 				color = "white"
 		currency = "{:,.0f}".format(config.mempool)
-		memp_label.configure(text=("Mempool: " + str(currency) + " transactions"), fg=color)
+		currency2 = "{:,.2f}".format(config.mempool_tps)
+		memp_label.configure(text=("Mempool: " + str(currency) + " txs  " + str(currency2) + " tps"), fg=color)
 		currency = "{:,.0f}".format(config.blocks)
 		if time.time() - config.timestamp <= 120:
 				color = "lightgreen"
@@ -261,8 +268,13 @@ class BTCTicker:
 				color = "lightgreen"
 		else:
 				color = "white"
-		#currency = "${:,.2f}".format(config.average_transaction_fee_usd_24h)
-		#avgfee_label.configure(text=("Average fee 24hr: " + str(currency)), fg=color)
+		#currency = "{:,.0f}".format(config.median_transaction_fee_sats_24h)
+		#currency2 = "${:,.2f}".format(config.median_transaction_fee_usd_24h)
+		#avgfee_label.configure(text=("Median fee 24hr: " + str(currency) + " sats  " + str(currency2)), fg=color)
+
+		currency = "{:,.0f}".format(config.volume_24h)
+		volume_label.configure(text="Volume 24hr: " + str(currency) + u'\u20bf', fg='white')
+		
 		hfee = "{:,.0f}".format(config.highfee)
 		mfee = "{:,.0f}".format(config.mediumfee)
 		lfee = "{:,.0f}".format(config.lowfee)
@@ -313,7 +325,6 @@ class BTCTicker:
 		elif config.ath > athnew:
 			athnew = config.ath
 		currency = "{:,.2f}".format(athnew)
-		ath_label.configure(text="ATH: $" + str(currency) + " " + athtrend, font=athfnt, fg=color)
 		try:
 			ath_change = (float(config.pricebtc) - athnew)/athnew
 		except ZeroDivisionError:
@@ -321,18 +332,23 @@ class BTCTicker:
 				ath_change
 			except NameError:
 				ath_change = -1
-		if ath_change * 100 >= -5:
-			color = 'lightgreen'
-		elif ath_change * 100 <= -50:
-			color = 'lightcoral'
-		else:
-			color = 'white'
-		currency = "{:,.2%}".format(ath_change)
-		athchg_label.configure(text="ATH change: " + str(currency), fg=color)
+		currency2 = "{:,.2%}".format(ath_change)
+		ath_label.configure(text="ATH: $" + str(currency) + " " + athtrend + " " + str(currency2), font=athfnt, fg=color)
+		
+		#if ath_change * 100 >= -5:
+		#	color = 'lightgreen'
+		#elif ath_change * 100 <= -50:
+		#	color = 'lightcoral'
+		#else:
+		#	color = 'white'
+		#athchg_label.configure(text="ATH change: " + str(currency), fg=color)
 		currency = "{:,.0f}".format(config.circulating_supply)
 		circ_label.configure(text="Circulating supply: " + str(currency) + u'\u20bf', fg='white')
 		fearindex_label.configure(text="F&G index: " + str(config.fearindexvalue)  + " - " + str(config.fearindex), fg='white')
+		currency = "{:,.0f}".format(config.totalnodes)
+		fullnodes_label.configure(text="Full nodes: " + str(currency), fg='white')
 
+		### Lightning Network ###
 		if config.lndcap_chg > 0:
 			trend = "+"
 		else:
@@ -358,17 +374,18 @@ class BTCTicker:
 		### Error Handling ###
 		error_label1.configure(text=str(""))
 		error_label2.configure(text=str(""))
-		if config.bcerror == 1 or config.bserror == 1 or config.cgerror == 1 or config.alterror == 1 or config.mlerror == 1 or config.mempoolerror == 1: 
-			error_label1.configure(text=str("Error Reading " + config.bs1 + config.mp1 + config.cg1 + config.bc1 + config.alte1 + config.mle1), font=('Helvetica', 14))
-		if config.bcerror == 2 or config.bserror == 2 or config.cgerror == 2 or config.alterror == 2 or config.mlerror == 2 or config.mempoolerror == 2:
-			error_label2.configure(text=str(config.bs2 + config.mp2 + config.cg2 + config.bc2 + config.alte2 + config.mle2 + "Connection Refused!"), font=('Helvetica', 14))
+		if config.bcerror == 1 or config.bserror == 1 or config.cgerror == 1 or config.alterror == 1 or config.mlerror == 1 or config.mempoolerror == 1 or config.nodeserror ==1: 
+			error_label1.configure(text=str("Error Reading " + config.bs1 + config.mp1 + config.cg1 + config.bc1 + config.alte1 + config.mle1 + config.ne1), font=('Helvetica', 14))
+		if config.bcerror == 2 or config.bserror == 2 or config.cgerror == 2 or config.alterror == 2 or config.mlerror == 2 or config.mempoolerror == 2 or config.nodeserror ==2:
+			error_label2.configure(text=str(config.bs2 + config.mp2 + config.cg2 + config.bc2 + config.alte2 + config.mle2 + config.ne2 + "Connection Refused!"), font=('Helvetica', 14))
 		if config.bcerror > 0:
 			dom_label.configure(fg='plum1')
+			volume_label.configure(fg='plum1')
 			#avgfee_label.configure(fg='plum1')
 		if config.bserror > 0:
 			price_label.configure(fg='plum1')
 			sats_label.configure(fg='plum1')
-			athchg_label.configure(fg='plum1')
+			#athchg_label.configure(fg='plum1')
 		if config.cgerror > 0:
 			change24_label.configure(fg='plum1')
 			circ_label.configure(fg='plum1')
@@ -385,12 +402,14 @@ class BTCTicker:
 			lnchannels_label.configure(fg='plum1')
 		if config.mempoolerror > 0:
 			block_label.configure(fg='plum1')
-			difficulty_label.configure(fg='plum1')
+			#difficulty_label.configure(fg='plum1')
 			dif_label.configure(fg='plum1')
 			hash_label.configure(fg='plum1')
 			memp_label.configure(fg='plum1')
 			recfeeusd_label.configure(fg='plum1')
 			recfee_label.configure(fg='plum1')
+		if config.nodeserror > 0:
+			fullnodes_label.configure(fg='plum1')
 		if config.bserror > 1 and config.cgerror > 1 and config.mempoolerror > 1:
 			error_label1.configure(text=str("No Internet Connection Available!"), font=('Helvetica',16, 'bold'))
 			error_label2.configure(text=str("Please Check Your Internet Connection"),font=('Helvetica',14, 'bold'))
@@ -406,17 +425,19 @@ class BTCTicker:
 			recfeeusd_label.configure(fg='plum1')
 			recfee_label.configure(fg='plum1')
 			hash_label.configure(fg='plum1')
-			difficulty_label.configure(fg='plum1')
+			#difficulty_label.configure(fg='plum1')
 			dif_label.configure(fg='plum1')
 			high24_label.configure(fg='plum1')
 			low24_label.configure(fg='plum1')
 			ath_label.configure(fg='plum1')
-			athchg_label.configure(fg='plum1')
+			#athchg_label.configure(fg='plum1')
 			athdate_label.configure(fg='plum1')
 			fearindex_label.configure(fg='plum1')
 			lnodes_label.configure(fg='plum1')
 			lgtcap_label.configure(fg='plum1')
 			lnchannels_label.configure(fg='plum1')
+			fullnodes_label.configure(fg='plum1')
+			volume_label.configure(fg='plum1')
 		
 		now = datetime.datetime.now()
 		duration = now - then

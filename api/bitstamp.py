@@ -15,7 +15,8 @@ def bitstamp():
 		except ZeroDivisionError:
 			print("Zero Division Error Calculating Sats per Dollar")
 			config.bserror = 1
-		print(config.pricebtc)
+		currency = "${:,.2f}".format(config.pricebtc)
+		print(currency)
 	except:
 		try:
 			urltest = requests.get(bitstamp_url)
