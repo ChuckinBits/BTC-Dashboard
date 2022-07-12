@@ -1,6 +1,6 @@
 from tkinter import *
 
-version = "v2.3.1"
+version = "v2.4.0"
 
 ### Default refresh time in seconds (change to your liking) ###
 default_refresh = 10
@@ -264,3 +264,16 @@ try:
 	totalnodes
 except NameError:
 	totalnodes = 0
+
+### NoBSBitcoin API ###
+nobserror = 0
+nobs1 = ""
+nobs2 = ""
+try:
+	ariclecount
+except NameError:
+	articlecount = 5
+try:
+	news
+except NameError:
+	news = ""

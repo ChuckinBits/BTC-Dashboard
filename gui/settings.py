@@ -4,12 +4,13 @@ import requests
 from PIL import ImageTk,Image
 from urllib.request import urlopen
 import config
-global customt
+
+global customtk
 try:
 	import customtkinter
-	customt = 1
+	customtk = True
 except:
-	customt = 0
+	customtk = False
 
 def settingsMenu():
 	# slider values (min 1 second, max 24 hours)
@@ -54,19 +55,33 @@ def settingsMenu():
 	def nodeEnable():
 		#Check if Custom Node is checked to enable Custom Node IP:Port text field
 		choice = src.get()
-		if choice == 0:
-			ip_entry.configure(state=DISABLED)
-			test_button.configure(state=DISABLED)
+		if customtk == True:
+			if choice == 0:
+				ip_entry.configure(state=DISABLED, text_color=["gray52", "gray62"])
+				test_button.configure(state=DISABLED)
+			else:
+				ip_entry.configure(state=NORMAL, text_color=["gray20", "gray90"])
+				test_button.configure(state=NORMAL)
 		else:
-			ip_entry.configure(state=NORMAL)
-			test_button.configure(state=NORMAL)
+			if choice == 0:
+				ip_entry.configure(state=DISABLED)
+				test_button.configure(state=DISABLED)
+			else:
+				ip_entry.configure(state=NORMAL)
+				test_button.configure(state=NORMAL)
 
 	def connectToNode():
 		#Update refresh time and mempool node source with and display updated values in a messagebox
+		global articles
 		global node_connected
 		global new_refreshtime
 		global refresh_seconds
 
+		suffix_msg = ""
+		try:
+			articles
+		except NameError:
+			articles = int(config.articlecount)
 		try:
 			refresh_seconds
 		except NameError:
@@ -76,17 +91,26 @@ def settingsMenu():
 		if int(refresh_seconds) == int(config.refreshtime / 1000):
 			refresh_msg = ""
 		else:
-			refresh_msg = "\nRefresh time set to " + time_text + ".\nNew refresh time will apply after next refresh"
+			refresh_msg = "\nRefresh time set to " + time_text
+			suffix_msg = ".\nNew settings will apply after the next refresh"
+		
+		if art_var.get() == config.articlecount:
+			articles_msg = ""
+		else:
+			articles_msg = "\nSet to display the latest " + str(art_var.get()) + " articles"
+			suffix_msg = ".\nNew settings will apply after the next refresh"
+			config.articlecount = art_var.get()
+
 		if src.get() == 0:
 			try:
 				urltest = requests.get('https://mempool.space/')
 				status = urltest.status_code
 				urltest.close()
 				config.node_connected = 0
-				messagebox.showinfo("Success!", "Successfully connected to Mempool.Space!" + refresh_msg, parent=settings)
+				messagebox.showinfo("Success!", "Successfully connected to Mempool.Space!" + refresh_msg + articles_msg + suffix_msg, parent=settings)
 				settings.destroy()
 			except:
-				messagebox.showerror("Error!", "Error Connecting to Mempool.Space!\nTry again later." + refresh_msg, parent=settings)
+				messagebox.showerror("Error!", "Error Connecting to Mempool.Space!\nTry again later." + refresh_msg + articles_msg + suffix_msg, parent=settings)
 		else:
 			try:
 				node_url = ip_entry.get()
@@ -97,12 +121,44 @@ def settingsMenu():
 				print("Successfully connected to custom node!")
 				config.node_connected = 1
 				config.ip_url = node_url
-				messagebox.showinfo("Success!", "Successfully connected to custom node!" + refresh_msg, parent=settings)
+				messagebox.showinfo("Success!", "Successfully connected to custom node!" + refresh_msg + articles_msg + suffix_msg, parent=settings)
 				settings.destroy()
 			except:
 				print("Tried connecting to: " + node_url)
 				print("Error Connecting to Node!")
-				messagebox.showerror("Error!", "Error Connecting to Node!\nCheck your URL and try again." + refresh_msg, parent=settings)
+				messagebox.showerror("Error!", "Error Connecting to Node!\nCheck your URL and try again." + refresh_msg + articles_msg + suffix_msg, parent=settings)
+	
+	def add_news():
+		#art = articles.get()
+		#art += 1
+		#articles.set(art)
+		art_var.set(art_var.get()+1)
+		articles_label.configure(text=str(art_var.get()))
+		articles_slider.set(art_var.get())
+		articles_buttons_state()
+
+	def sub_news():
+		art = art_var.get()
+		art -= 1
+		art_var.set(art)
+		articles_label.configure(text=str(art))
+		articles_slider.set(art)
+		articles_buttons_state()
+
+	def articles_buttons_state():
+		art = art_var.get()
+		if art == 1:
+			subtract_news_button.configure(state=DISABLED, fg_color='darkgray')
+		elif art == 25:
+			add_news_button.configure(state=DISABLED, fg_color='darkgray')
+		else:
+			add_news_button.configure(state=NORMAL, fg_color=["#72CF9F", "#11B384"])
+			subtract_news_button.configure(state=NORMAL, fg_color=["#72CF9F", "#11B384"])
+
+	def articles_change(self):
+		global articles_slider_value
+		articles_label.configure(text=str(art_var.get()))
+		articles_slider_value = art_var.get()
 
 	def slider_change(self):
 		#Sets slider value to various refresh times
@@ -239,7 +295,9 @@ def settingsMenu():
 	def on_closing():
 		#Set the slider value to the refresh time when closing the settings window
 		global slider_value
+		global articles_slider_value
 		slider_value = checkCustomRefresh(config.new_refreshtime // 1000)
+		articles_slider_value = config.articlecount
 		settings.destroy()
 
 	global ip_entry
@@ -251,49 +309,108 @@ def settingsMenu():
 		slider_value
 	except NameError:
 		slider_value = checkCustomRefresh(config.default_refresh)
+	try:
+		articles_slider_value
+	except NameError:
+		articles_slider_value = config.articlecount
+	try:
+		articles_text
+	except NameError:
+		articles_text = str(config.articlecount)
 
+
+	art_var = IntVar()
+	art_var.set(articles_slider_value)
 	spin_var = IntVar()
 	spin_var.set(slider_value)
-	src = IntVar()
-	src.set(config.node_connected)
-	settings_width = 550
-	settings_height = 300
-	config.width_value=config.root.winfo_screenwidth()
-	config.height_value=config.root.winfo_screenheight()
-	settings_x = int((config.width_value / 2) - (settings_width / 2))
-	settings_y = int((config.height_value / 2) - (settings_height / 2))
 
-	if customt == 1:
+	if customtk == True:
+		settings_width = 550
+		settings_height = 480
 		customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 		customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
 		settings = customtkinter.CTkToplevel()
-		refresh_label = customtkinter.CTkLabel(settings, text="Refresh Interval", text_font=('Helvetica',20, 'bold'))
+		frame_all = customtkinter.CTkFrame(master=settings)
+		frame_all.grid(pady=20, padx=30)
+		### Declare Images ###
+		ip_text = StringVar()
+		ip_text.set(config.ip_url)
+		try:
+			add_news_image = ImageTk.PhotoImage(Image.open("images\add-news.png").resize((35,35), Image.ANTIALIAS))
+			subtract_news_image = ImageTk.PhotoImage(Image.open("images\subtract-news.png").resize((35,35), Image.ANTIALIAS))
+		except:
+			add_news_image = ImageTk.PhotoImage(Image.open("images/add-news.png").resize((35,35), Image.ANTIALIAS))
+			subtract_news_image = ImageTk.PhotoImage(Image.open("images/subtract-news.png").resize((35,35), Image.ANTIALIAS))
+		### Refresh Interval ###
+		refresh_label = customtkinter.CTkLabel(frame_all, text="Refresh Interval", text_font=('Helvetica',20, 'bold'), text_color='#f2a900')
 		refresh_label.grid(row=0, column=1, columnspan=3, ipady=20)
-		refresh_conv = customtkinter.CTkLabel(settings, text=time_text, text_font=('Helvetica', 16))
-		slider = customtkinter.CTkSlider(settings, from_=minval, to=maxval, variable=spin_var, command=slider_change)
-		top_label = customtkinter.CTkLabel(settings, text="Mempool Source", text_font=('Helvetica',20, 'bold'))
-		r_memp = customtkinter.CTkRadioButton(settings, text="Default", variable=src, value=0, command=nodeEnable, text_font=('Helvetica',14))
-		r_custom = customtkinter.CTkRadioButton(settings, text="Custom Node", variable=src, value=1, command=nodeEnable, text_font=('Helvetica',14))
-		url_label = customtkinter.CTkLabel(settings, text="Custom Node URL", text_font=('Helvetica',14))
-		ip_entry = customtkinter.CTkEntry(settings, text_font=('Helvetica',14), width=225)
-		test_button = customtkinter.CTkButton(settings, text="Test", text_font=('Helvetica', 14), command=testConnection)
-		connect_button = customtkinter.CTkButton(settings, text="Apply", text_font=('Helvetica',14, 'bold'), bg='#f2a900', width=30, command=connectToNode)
-		connect_button.grid(row=6, column=0, columnspan=4, pady=30)
+		refresh_conv = customtkinter.CTkLabel(frame_all, text=time_text, text_font=('Helvetica', 16))
+		slider = customtkinter.CTkSlider(frame_all, from_=minval, to=maxval, variable=spin_var, command=slider_change)
+		###  News Article Slider ###
+		news_title = customtkinter.CTkLabel(frame_all, text="Latest News Articles", text_font=('Helvetica',20, 'bold'), text_color='#f2a900')
+		news_title.grid(row=3, column=1, columnspan=3, ipady=20)
+		subtract_news_button = customtkinter.CTkButton(frame_all, image=subtract_news_image, text="", width=40, height=40, compound="right", command=sub_news)
+		subtract_news_button.grid(row=4, column=1, columnspan=2)
+		articles_label = customtkinter.CTkLabel(frame_all, text=articles_text, text_font=('Helvetica', 16), width=40)
+		add_news_button = customtkinter.CTkButton(frame_all, image=add_news_image, text="", width=40, height=40, compound="left", command=add_news)
+		add_news_button.grid(row=4, column=2, columnspan=2, pady=(0,0))
+		articles_slider = customtkinter.CTkSlider(frame_all, from_=1, to=25, variable=art_var, command=articles_change)
+		### Mempool Source ###
+		top_label = customtkinter.CTkLabel(frame_all, text="Mempool Source", text_font=('Helvetica',20, 'bold'), text_color='#f2a900')
+		#r_memp = customtkinter.CTkRadioButton(settings, text="Default", variable=src, value=0, command=nodeEnable, text_font=('Helvetica',14))
+		#r_custom = customtkinter.CTkRadioButton(settings, text="Custom Node", variable=src, value=1, command=nodeEnable, text_font=('Helvetica',14))
+		mempool_label = customtkinter.CTkLabel(frame_all, text="mempool.space", text_font=('Helvetica',14))
+		mempool_label.grid(row=7, column=1, columnspan=2, padx=(0,70))
+		src = customtkinter.CTkSwitch(frame_all, text="Custom Node", command=nodeEnable, text_font=('Helvetica',14), onvalue=1, offvalue=0)
+		src.grid(row=7, column=2, columnspan=3, padx=(0,0), pady=(10,10))
+		url_label = customtkinter.CTkLabel(frame_all, text="Node URL", text_font=('Helvetica',14))
+		url_label.grid(row=8, column=1, padx=(10,0))
+		ip_entry = customtkinter.CTkEntry(frame_all, text_font=('Helvetica',14), textvariable=ip_text, width=250)
+		ip_entry.grid(row=8, column=2, padx=(0,0))
+		test_button = customtkinter.CTkButton(frame_all, text="Test", text_font=('Helvetica', 14), command=testConnection, width=60)
+		test_button.grid(row=8, column=3, padx=(0,30))
+		connect_button = customtkinter.CTkButton(frame_all, text="Apply", text_font=('Helvetica',14, 'bold'), bg='#f2a900', width=300, command=connectToNode)
+		connect_button.grid(row=9, column=0, columnspan=4, pady=30)
+		if config.node_connected == 1:
+			src.select()
+		else:
+			src.deselect()
 	else:
+		settings_width = 480
+		settings_height = 400
+		### Classic Tkinter ###
 		settings = Toplevel()
+		src = IntVar()
+		src.set(config.node_connected)
+		### Refresh Interval ###
 		refresh_label = Label(settings, text="Refresh Interval", font=('Helvetica',18, 'bold'))
 		refresh_label.grid(row=0, column=1, columnspan=3, ipady=5)
 		refresh_conv = Label(settings, text=time_text, font=('Helvetica', 16))
 		slider = Scale(settings, from_=minval, to=maxval, orient='horizontal', showvalue=0, variable=spin_var, command=slider_change)
+		### News Articles Slider ###
+		news_title = Label(settings, text="Latest News Articles", font=('Helvetica',18, 'bold'))
+		news_title.grid(row=3, column=1, columnspan=3, ipady=5)
+		articles_label = Label(settings, text=articles_text, font=('Helvetica', 16))
+		articles_slider = Scale(settings, from_=1, to=25, orient='horizontal', showvalue=0, variable=art_var, command=articles_change)
+		### Mempool Source ###
 		top_label = Label(settings, text="Mempool Source", font=('Helvetica',18, 'bold'))
 		r_memp = Radiobutton(settings, text="Default", variable=src, value=0, command=nodeEnable, font=('Helvetica',14))
+		r_memp.grid(row=7, column=1, columnspan=2, padx=(0,120), pady=(5,10))
 		r_custom = Radiobutton(settings, text="Custom Node", variable=src, value=1, command=nodeEnable, font=('Helvetica',14))
-		url_label = Label(settings, text="Custom Node URL", font=('Helvetica',14))
+		r_custom.grid(row=7, column=2, columnspan=2, padx=(0,0), pady=(5,10))
+		url_label = Label(settings, text="Node URL", font=('Helvetica',14))
+		url_label.grid(row=8, column=1, padx=(30,0))
 		ip_entry = Entry(settings, font=('Helvetica',14), width=25)
+		ip_entry.grid(row=8, column=2)
+		ip_entry.insert(0, config.ip_url)
 		test_button = Button(settings, text="Test", font=('Helvetica', 14), command=testConnection)
+		test_button.grid(row=8, column=3)
 		connect_button = Button(settings, text="Apply", font=('Helvetica',14, 'bold'), bg='#f2a900', width=30, command=connectToNode)
-		connect_button.grid(row=6, column=0, columnspan=4, pady=10)
-	
+		connect_button.grid(row=9, column=0, columnspan=4, pady=10)
+	config.width_value=config.root.winfo_screenwidth()
+	config.height_value=config.root.winfo_screenheight()
+	settings_x = int((config.width_value / 2) - (settings_width / 2))
+	settings_y = int((config.height_value / 2) - (settings_height / 2))
 	settings.geometry(f'{settings_width}x{settings_height}+{settings_x}+{settings_y}')
 	settings.title('Settings')
 	try:
@@ -304,13 +421,10 @@ def settingsMenu():
 	refresh_conv.grid(row=1, column=1, columnspan=3)
 	slider.grid(row=2, column=1, columnspan=3)
 	slider.set(slider_value)
-	top_label.grid(row=3, column=1, columnspan=3)
-	r_memp.grid(row=4, column=1, columnspan=2, padx=(0,120), pady=(5,10))
-	r_custom.grid(row=4, column=2, columnspan=2, padx=(0,50), pady=(5,10))
-	url_label.grid(row=5, column=1)
-	ip_entry.grid(row=5, column=2)
-	test_button.grid(row=5, column=3)
-	ip_entry.insert(0, config.ip_url)
+	articles_label.grid(row=4, column=1, columnspan=3)
+	articles_slider.grid(row=5, column=1, columnspan=3)
+	articles_slider.set(articles_slider_value)
+	top_label.grid(row=6, column=1, columnspan=3)
 	nodeEnable()
 	settings.update()
 	settings.protocol("WM_DELETE_WINDOW", on_closing)

@@ -13,6 +13,11 @@ import api.apicall
 import gui.splash
 from gui.settings import settingsMenu
 
+i=0
+x=0
+y=0
+commbreak = False
+
 class BTCTicker:
 	def __init__(self, master):
 
@@ -46,13 +51,14 @@ class BTCTicker:
 		global error_label1
 		global error_label2
 		global update_label
+		global news_text
 		
 		# Initialize the main interface
 		self.master = master
 		self.close_button = Button(image=btclogo, borderwidth=0, highlightthickness = 0, command=self.close)
-		self.close_button.grid(row=0, column=0)
+		self.close_button.grid(row=1, column=0)
 		self.label = Label(master, text=("   \u20bfitcoin Dashboard       "), font=('Helvetica',32, 'bold'), fg='black', bg = '#f2a900')
-		self.label.grid(row=0, column=1)
+		self.label.grid(row=1, column=1)
 
 		title = "Market Data"
 		market_label = Label(master, text=(title),anchor=NW, justify=LEFT,font=('Helvetica', 28, 'bold'), bg='black', fg='#f2a900')
@@ -123,9 +129,11 @@ class BTCTicker:
 		error_label2.grid(row=15, column=2, sticky=W)	
 		update_label = Label(text=("Last Update: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',12), bg='black', fg='white')
 		update_label.grid(row=16, column=2, sticky=W)
+		news_text = Text(background='black', foreground="#f2a900", width=200, height=1, wrap="none", font=('Helvetica',20))
+		news_text.grid(row=0, column=0, columnspan=4, sticky=W )
 
 		self.settings_button = Button(image=settingsicon, borderwidth=0, highlightthickness = 0, command=lambda: threading.Thread(target=settingsMenu).start())
-		self.settings_button.grid(row=0, column=3)
+		self.settings_button.grid(row=1, column=3)
 	
 		#Scale the output to the screen size
 		Grid.columnconfigure(config.root,2,weight=1)
@@ -148,6 +156,51 @@ class BTCTicker:
 
 		print("Static Labels Initialized")
 
+	def newsticker():
+		global i, x, y, commbreak, headline
+		artnum = x + 1
+		if commbreak == False:
+			gmt_date = config.news.entries[x].published
+			headline = str(artnum) + ". " + config.news.entries[x].title + "    \u20bf    " + str(gmt_date)
+		else:
+			headline = f'\u20bf     Bitcoin Dashboard by CypherHive     \u20bf     cypherhive.com     \u20bf     News by {config.news.feed.title}     \u20bf     {config.news.feed.description}     \u20bf'
+		headlength = len(headline) * 2.5
+		headline = headline.ljust(int(headlength))
+		fully_scrolled = news_text.xview()[1] == 1.0
+		if not fully_scrolled:
+			news_text.xview_scroll(1, 'pixels')
+		if y % 8 == 0:
+			show = (headline[i])
+			news_text.configure(state="normal")
+			news_text.insert("end", show)
+			news_text.configure(state="disabled")
+		
+			if i < len(headline) - 1:
+				i+=1
+			else:
+				news_text.configure(state="normal")
+				news_text.delete(1.0, "end")
+				news_text.configure(state="disabled")
+				x += 1
+				commbreak = False
+				#Get the latest headlines
+				if x > config.articlecount - 1:
+					commbreak = True 
+					print(f'CommBreak = {commbreak}')
+				if x > config.articlecount:
+					x = 0
+					commbreak = False
+					headline = config.news.entries[x].title
+				i=0
+		y +=1
+		news_text.after(10, BTCTicker.newsticker)
+
+	def fetch_data():
+		api.apicall.apiCall()
+		BTCTicker.labels()
+		print('Waiting for next API Call')
+		update_label.after(config.refreshtime, BTCTicker.fetch_data)
+
 	def labels():
 
 		global ath
@@ -164,9 +217,6 @@ class BTCTicker:
 		global onlyonce
 		global prevpricebtc
 		global then
-
-		#Call the API's and fetch new values
-		api.apicall.apiCall()
 
 		# Refresh the screen with the newly fetched data
 		print("Refreshing data on screen")
@@ -410,6 +460,10 @@ class BTCTicker:
 			recfee_label.configure(fg='plum1')
 		if config.nodeserror > 0:
 			fullnodes_label.configure(fg='plum1')
+		if config.nobserror > 0:
+			news_text.configure(foreground='plum1')
+		else:
+			news_text.configure(foreground="#f2a900")
 		if config.bserror > 1 and config.cgerror > 1 and config.mempoolerror > 1:
 			error_label1.configure(text=str("No Internet Connection Available!"), font=('Helvetica',16, 'bold'))
 			error_label2.configure(text=str("Please Check Your Internet Connection"),font=('Helvetica',14, 'bold'))
@@ -438,6 +492,7 @@ class BTCTicker:
 			lnchannels_label.configure(fg='plum1')
 			fullnodes_label.configure(fg='plum1')
 			volume_label.configure(fg='plum1')
+			news_text.configure(foreground='plum1')
 		
 		now = datetime.datetime.now()
 		duration = now - then
@@ -477,15 +532,13 @@ class BTCTicker:
 				print("Zero Division Error Calculating Average Transaction Fee 24H diff")
 			average_transaction_fee_usd_24hsav = config.average_transaction_fee_usd_24h
 			then = datetime.datetime.now()
-
-		update_label.after(config.refreshtime,BTCTicker.labels) 
+		print("Screen Refreshed!")
 
 	def close(self):
 		#Close all windows when Bitcoin button is pressed
 		try:
 			settings.destroy()
 			gc.collect()
-			#sys.exit()
 		except:
 			pass
 		config.root.destroy()
@@ -513,4 +566,7 @@ except:
 my_gui = BTCTicker(config.root)
 api.apicall.initialCall()
 BTCTicker.labels()
+BTCTicker.fetch_data()
+news_thread = threading.Thread(target=BTCTicker.newsticker, name="NewsTicker")
+news_thread.start()
 mainloop()
