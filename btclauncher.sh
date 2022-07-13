@@ -10,5 +10,5 @@ clear
 echo Screensaver turned off...
 cd /
 cd home/pi/BTC-Dashboard
-sudo python3 BTCDashboard.py
+python3 BTCDashboard.py
 cd /
