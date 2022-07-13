@@ -24,9 +24,9 @@ The dashboard indicators include:<br>
 - At least a [7 Inch Display Monitor](https://amzn.to/3fnSYCP) 1024X600. Larger displays also work.
 
 ## Install Instructions: 
-***Italic text = Raspberry Pi only***
-#### [Detailed Raspberry Pi Tutorial](https://cypherhive.com/bitcoindashboard/)
-*Install [Raspberry Pi OS](https://www.raspberrypi.org/software/) on your Raspberry Pi*<br>
+### 🥧 Raspberry Pi only 🥧
+#### 🥧 [Detailed Raspberry Pi Tutorial](https://cypherhive.com/bitcoindashboard/) 🥧
+🥧 Install [Raspberry Pi OS](https://www.raspberrypi.org/software/) on your Raspberry Pi 🥧
 Make sure everything is updated
 ```shell
 sudo apt-get update && sudo apt-get upgrade -y
@@ -35,9 +35,9 @@ Clone this repository
 ```shell
 git clone https://github.com/ChuckinBits/BTC-Dashboard.git
 ```
-*Now you will have BTC-Dashboard directory under /home/pi/*
-*<br>Right mouse click btclauncher.sh and click properties*
-*<br>Click the "Permissions" tab and change Execute option to "Anyone" and click OK*
+🥧Now you will have BTC-Dashboard directory under /home/pi/
+<br>Right mouse click btclauncher.sh and click properties
+<br>Click the "Permissions" tab and change Execute option to "Anyone" and click OK 🥧
 
 ## Install Dependencies
 
