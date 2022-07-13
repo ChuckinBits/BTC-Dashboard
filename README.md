@@ -24,10 +24,10 @@ The dashboard indicators include:<br>
 - At least a [7 Inch Display Monitor](https://amzn.to/3fnSYCP) 1024X600. Larger displays also work.
 
 ## Install Instructions: 
-### 🥧 Raspberry Pi only 🥧
+#### 🥧 = Raspberry Pi instructions 🥧
 #### 🥧 [Detailed Raspberry Pi Tutorial](https://cypherhive.com/bitcoindashboard/) 🥧
 🥧 Install [Raspberry Pi OS](https://www.raspberrypi.org/software/) on your Raspberry Pi 🥧
-Make sure everything is updated
+<br><br>Make sure everything is updated
 ```shell
 sudo apt-get update && sudo apt-get upgrade -y
 ```
