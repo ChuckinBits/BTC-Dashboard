@@ -1,9 +1,10 @@
 # BTC Dashboard
 [![YouTube Video Views](https://img.shields.io/youtube/views/7Ui-3r9wZ64?style=social)](https://youtu.be/7Ui-3r9wZ64)
-#### v2.3.1
+#### v2.4.0
 BTC dashboard is a Python program that you can run on a Raspberry Pi or computer of your choice and displays the output on a screen. The program provides up-to-date tracking of key Bitcoin indicators. The program uses free API's online and automatically respects their free data request limits. <br>
 No accounts, API keys, or log-ins required<br>
 The dashboard indicators include:<br>
+<li> News feed: Latest Bitcoin news by No Bullshit Bitcoin.
 <li> Market Data: Price, sats/USD, 24hr Change, BTC Dominance, Circulating Supply, and MarketCap.
 <li> Mempool Data: Block Height - time since block added, # of Transactions in the Mempool, Recommended Fees: Fast, Medium, Low, Hashrate, Difficulty, and Next difficulty adjustment estimate.
 <li> Other Indicators: BTC High 24hr, BTC Low 24hr, ATH (All Time High), ATH change (%), ATH Date, Fear & Greed Index, Fear Value, Blocks until Taproot activation, Taproot date, Lightning Network Capacity + 30 day change, # of Lightning Nodes + 30 day change, # of Lightning Channels + 30 day change, Error messages, and Date/Time of Last update
@@ -17,13 +18,15 @@ The dashboard indicators include:<br>
 <img src="https://cypherhive.com/wp-content/uploads/2021/01/BTC-Dashboard8ATHBHgreen.jpg" border="1"><br>
 
 ## Minimum Hardware Requirements
-- A Raspberry Pi [0w](https://amzn.to/2RLVBFs), 1, 2, 3, 4+ (tested on 0w and 4) or you can also run on a computer with Python installed
+- Any computer with Python installed
+- For a stand-alone dashboard you can run it on A Raspberry Pi [0w](https://amzn.to/2RLVBFs), 1, 2, 3, 4+ (tested on 0w and 4) 
 - Constant internet connection
-- [7 Inch Display Monitor](https://amzn.to/3fnSYCP) 1024X600. Larger displays should also work.
+- At least a [7 Inch Display Monitor](https://amzn.to/3fnSYCP) 1024X600. Larger displays also work.
 
-## Install on Raspberry Pi
-#### [Detailed Tutorial](https://cypherhive.com/bitcoindashboard/)
-Install [Raspberry Pi OS](https://www.raspberrypi.org/software/) on your Raspberry Pi<br>
+## Install Instructions: 
+***Italic text = Raspberry Pi only***
+#### [Detailed Raspberry Pi Tutorial](https://cypherhive.com/bitcoindashboard/)
+*Install [Raspberry Pi OS](https://www.raspberrypi.org/software/) on your Raspberry Pi*<br>
 Make sure everything is updated
 ```shell
 sudo apt-get update && sudo apt-get upgrade -y
@@ -32,9 +35,9 @@ Clone this repository
 ```shell
 git clone https://github.com/ChuckinBits/BTC-Dashboard.git
 ```
-Now you will have BTC-Dashboard directory under /home/pi/
-<br>Right mouse click btclauncher.sh and click properties
-<br>Click the "Permissions" tab and change Execute option to "Anyone" and click OK
+*Now you will have BTC-Dashboard directory under /home/pi/*
+*<br>Right mouse click btclauncher.sh and click properties*
+*<br>Click the "Permissions" tab and change Execute option to "Anyone" and click OK*
 
 ## Install Dependencies
 
@@ -45,13 +48,13 @@ cd BTC-Dashboard
 ```
 Automatically install all of the required dependencies from the requirements.txt file
 ```shell
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
-### Manually Install Dependencies
+### Manually Install Dependencies (Skip if you automatically installed dependencies☝️)
 Intall Requests dependency to allow requesting of the API data
 ```shell
-pip install requests
+pip3 install requests
 ```
 Install XTERM dependency to allow the screensaver to be suppressed
 ```shell
@@ -60,6 +63,10 @@ sudo apt-get install xterm
 Install PILLOW dependecy
 ```shell
 sudo apt-get install python3-pil python3-pil.imagetk
+```
+Install FeedParser dependecy
+```shell
+pip3 install feedparser
 ```
 Install Custom Tkinter dependecy
 ```shell
