@@ -7,11 +7,23 @@ import config
 global customt
 try:
 	import customtkinter
+	# Stop customtkinter switching the process to high-DPI mode, which shrinks the fullscreen dashboard on scaled Windows displays
+	customtkinter.deactivate_automatic_dpi_awareness()
 	customt = 1
 except:
 	customt = 0
 
 def settingsMenu():
+	global settings
+	# If the settings window is already open, bring it to the front instead of opening another
+	try:
+		if settings.winfo_exists():
+			settings.lift()
+			settings.focus_force()
+			return
+	except (NameError, TclError):
+		pass
+
 	# slider values (min 1 second, max 24 hours)
 	minval = 1
 	maxval = 24
@@ -243,7 +255,6 @@ def settingsMenu():
 		settings.destroy()
 
 	global ip_entry
-	global settings
 	global slider_value
 	global src
 
@@ -267,17 +278,17 @@ def settingsMenu():
 		customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 		customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
 		settings = customtkinter.CTkToplevel()
-		refresh_label = customtkinter.CTkLabel(settings, text="Refresh Interval", text_font=('Helvetica',20, 'bold'))
+		refresh_label = customtkinter.CTkLabel(settings, text="Refresh Interval", font=('Helvetica',20, 'bold'))
 		refresh_label.grid(row=0, column=1, columnspan=3, ipady=20)
-		refresh_conv = customtkinter.CTkLabel(settings, text=time_text, text_font=('Helvetica', 16))
+		refresh_conv = customtkinter.CTkLabel(settings, text=time_text, font=('Helvetica', 16))
 		slider = customtkinter.CTkSlider(settings, from_=minval, to=maxval, variable=spin_var, command=slider_change)
-		top_label = customtkinter.CTkLabel(settings, text="Mempool Source", text_font=('Helvetica',20, 'bold'))
-		r_memp = customtkinter.CTkRadioButton(settings, text="Default", variable=src, value=0, command=nodeEnable, text_font=('Helvetica',14))
-		r_custom = customtkinter.CTkRadioButton(settings, text="Custom Node", variable=src, value=1, command=nodeEnable, text_font=('Helvetica',14))
-		url_label = customtkinter.CTkLabel(settings, text="Custom Node URL", text_font=('Helvetica',14))
-		ip_entry = customtkinter.CTkEntry(settings, text_font=('Helvetica',14), width=225)
-		test_button = customtkinter.CTkButton(settings, text="Test", text_font=('Helvetica', 14), command=testConnection)
-		connect_button = customtkinter.CTkButton(settings, text="Apply", text_font=('Helvetica',14, 'bold'), bg='#f2a900', width=30, command=connectToNode)
+		top_label = customtkinter.CTkLabel(settings, text="Mempool Source", font=('Helvetica',20, 'bold'))
+		r_memp = customtkinter.CTkRadioButton(settings, text="Default", variable=src, value=0, command=nodeEnable, font=('Helvetica',14))
+		r_custom = customtkinter.CTkRadioButton(settings, text="Custom Node", variable=src, value=1, command=nodeEnable, font=('Helvetica',14))
+		url_label = customtkinter.CTkLabel(settings, text="Custom Node URL", font=('Helvetica',14))
+		ip_entry = customtkinter.CTkEntry(settings, font=('Helvetica',14), width=225)
+		test_button = customtkinter.CTkButton(settings, text="Test", font=('Helvetica', 14), command=testConnection)
+		connect_button = customtkinter.CTkButton(settings, text="Apply", font=('Helvetica',14, 'bold'), bg_color='#f2a900', width=30, command=connectToNode)
 		connect_button.grid(row=6, column=0, columnspan=4, pady=30)
 	else:
 		settings = Toplevel()
@@ -314,4 +325,8 @@ def settingsMenu():
 	nodeEnable()
 	settings.update()
 	settings.protocol("WM_DELETE_WINDOW", on_closing)
+	# Keep settings above the fullscreen dashboard
+	settings.transient(config.root)
+	settings.lift()
+	settings.focus_force()
 	config.root.wait_window(settings)

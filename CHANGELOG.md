@@ -1,5 +1,16 @@
 # Versions
 
+## Version 2.3.2
+
+### Bug Fixes
+- Updated Settings Menu for CustomTkinter 5.0+ (`text_font` renamed to `font`, `bg` renamed to `bg_color`), which fixed a crash when opening Settings
+- Fixed difficulty adjustment date showing 1970: now uses mempool's `estimatedRetargetDate` instead of `remainingTime`
+- Settings menu now runs on the main thread, which fixed a crash when closing after opening Settings several times
+- Clicking Settings while it is already open brings the existing window to the front instead of opening another
+- Settings window now stays in front of the fullscreen dashboard
+- Dashboard now comes to the front on launch instead of opening behind other windows (Windows)
+- Fixed dashboard shrinking from fullscreen when Settings opens on scaled displays (Windows): disabled CustomTkinter's automatic DPI awareness
+
 ## Version 2.3.1
 
 ### Mempool Data Indicators Changed
