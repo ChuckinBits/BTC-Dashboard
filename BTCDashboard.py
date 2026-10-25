@@ -118,7 +118,7 @@ class BTCTicker:
 		update_label = Label(text=("Last Update: " + str(0)),anchor=NW, justify=LEFT,font=('Helvetica',12), bg='black', fg='white')
 		update_label.grid(row=16, column=2, sticky=W)
 
-		self.settings_button = Button(image=settingsicon, borderwidth=0, highlightthickness = 0, command=lambda: threading.Thread(target=settingsMenu).start())
+		self.settings_button = Button(image=settingsicon, borderwidth=0, highlightthickness = 0, command=settingsMenu)
 		self.settings_button.grid(row=0, column=3)
 	
 		#Scale the output to the screen size
@@ -430,6 +430,11 @@ class BTCTicker:
 			mempoolsav = config.mempool
 			average_transaction_fee_usd_24hsav = config.average_transaction_fee_usd_24h
 			config.splash.destroy()
+			# Bring the dashboard to the front (Windows otherwise leaves it behind other apps)
+			config.root.lift()
+			config.root.attributes('-topmost', True)
+			config.root.after_idle(config.root.attributes, '-topmost', False)
+			config.root.focus_force()
 			onlyonce = 1
 
 		# to calculate the hourly differences

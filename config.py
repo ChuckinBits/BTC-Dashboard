@@ -1,6 +1,6 @@
 from tkinter import *
 
-version = "v2.3.1"
+version = "v2.3.2"
 
 ### Default refresh time in seconds (change to your liking) ###
 default_refresh = 10

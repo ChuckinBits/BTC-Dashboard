@@ -30,7 +30,7 @@ def mempoolspace():
 		config.currenthashrate = float(loads(hashrate_api_request)['currentHashrate'])
 		config.currentdifficulty = float(loads(hashrate_api_request)['currentDifficulty'])
 		difadj_api_request = urlopen(difadj_url).read()
-		config.next_retarget_time_estimate = float(loads(difadj_api_request)['remainingTime'])
+		config.next_retarget_time_estimate = float(loads(difadj_api_request)['estimatedRetargetDate'])
 		config.diffadj = float(loads(difadj_api_request)['difficultyChange'])
 
 		if newBlock > config.oldblock:
